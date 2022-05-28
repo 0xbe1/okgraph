@@ -1,6 +1,18 @@
+import axios from 'axios'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import React, { useEffect, useState } from 'react'
+import { SubgraphIndexingStatus } from './api/status'
+
+export type Result<T> =
+  | {
+      data: T
+      error?: never
+    }
+  | {
+      data?: never
+      error: { message: string }
+    }
 
 const Home: NextPage = () => {
   // autofocus input, see https://reactjs.org/docs/hooks-reference.html#useref
@@ -12,6 +24,25 @@ const Home: NextPage = () => {
   }, [])
 
   const [subgraphID, setSubgraphID] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState<SubgraphIndexingStatus | null>(null)
+  const validSubgraphID = subgraphID.length === 46
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true)
+      try {
+        const { data } = await axios.get(`api/status?subgraphID=${subgraphID}`)
+        setStatus(data.data)
+      } catch (error: any) {
+        setStatus(null)
+      }
+      setLoading(false)
+    }
+    if (validSubgraphID) {
+      fetchData()
+    }
+  }, [subgraphID])
 
   function handleChange(event: React.FormEvent<HTMLInputElement>) {
     setSubgraphID(event.currentTarget.value)
@@ -22,18 +53,12 @@ const Home: NextPage = () => {
       <Head>
         <title>okgraph</title>
         <link rel="icon" href="/favicon.ico" />
-        <script async src="https://cdn.splitbee.io/sb.js"></script>
       </Head>
 
       <main className="flex w-full flex-1 items-center sm:w-3/5 lg:w-2/5">
         <div className="w-full">
           <div className=" text-center">
-            <p className="text-purple-600 text-6xl font-bold">
-              okgraph
-            </p>
-            <p className="mt-3 text-xl">
-              Is your subgraph OK?
-            </p>
+            <p className="text-6xl font-bold text-purple-600">okgraph</p>
           </div>
           <input
             type="text"
@@ -45,6 +70,7 @@ const Home: NextPage = () => {
             onChange={handleChange}
             ref={inputElement}
           />
+          <Display subgraphID={subgraphID} loading={loading} status={status} />
         </div>
       </main>
 
@@ -82,3 +108,31 @@ const Home: NextPage = () => {
 }
 
 export default Home
+
+function Display({
+  subgraphID,
+  loading,
+  status,
+}: {
+  subgraphID: string
+  loading: boolean
+  status: SubgraphIndexingStatus | null
+}) {
+  if (subgraphID.length === 0) {
+    return <p>Paste the ID</p>
+  }
+  if (subgraphID.length !== 46) {
+    return <p>Invalid subgraph ID</p>
+  }
+  if (loading) {
+    return <p>Loading ...</p>
+  }
+  if (!status) {
+    return <p>This should not happen</p>
+  }
+  return <Status {...status} />
+}
+
+const Status = (props: SubgraphIndexingStatus) => {
+  return <div>{JSON.stringify(props)}</div>
+}
