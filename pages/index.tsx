@@ -52,7 +52,7 @@ const Home: NextPage = () => {
           </div>
           <input
             type="text"
-            className="form-control relative my-5 block w-full min-w-0 flex-auto rounded border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-1.5 text-center text-base font-normal text-gray-700 transition ease-in-out focus:border-purple-600 focus:bg-white focus:text-gray-700 focus:outline-none"
+            className="form-control relative my-5 block w-full min-w-0 flex-auto rounded border border-solid border-purple-600 bg-white px-3 py-1.5 text-center text-base font-normal text-gray-700 outline-none"
             placeholder="Subgraph ID"
             aria-label="Search"
             aria-describedby="button-addon2"
