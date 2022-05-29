@@ -14,17 +14,13 @@ const Home: NextPage = () => {
   }, [])
 
   // It could either be Qm-starting ID, or "org/subgraph" name
+  const [wipSubgraphID, setWipSubgraphID] = useState('')
   const [subgraphID, setSubgraphID] = useState('')
+
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState<SubgraphIndexingStatus | null>(null)
 
-  function handleChange(event: React.FormEvent<HTMLInputElement>) {
-    // TODO: should i
-    // setStatus(null)
-    setSubgraphID(event.currentTarget.value)
-  }
-
-  function handleSubmit(event: React.FormEvent<HTMLInputElement>) {
+  useEffect(() => {
     async function fetchData() {
       setLoading(true)
       try {
@@ -35,12 +31,18 @@ const Home: NextPage = () => {
       }
       setLoading(false)
     }
-
-    event.preventDefault()
-
     if (isValidID(subgraphID) || isValidName(subgraphID)) {
       fetchData()
     }
+  }, [subgraphID])
+
+  function handleChange(event: React.FormEvent<HTMLInputElement>) {
+    setWipSubgraphID(event.currentTarget.value)
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLInputElement>) {
+    event.preventDefault()
+    setSubgraphID(wipSubgraphID)
   }
 
   return (
@@ -61,7 +63,7 @@ const Home: NextPage = () => {
             placeholder={'"Qm..." or "org/subgraph"'}
             aria-label="Search"
             aria-describedby="button-addon2"
-            value={subgraphID}
+            value={wipSubgraphID}
             onChange={handleChange}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
