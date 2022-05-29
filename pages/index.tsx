@@ -44,7 +44,7 @@ const Home: NextPage = () => {
     }
   }, [subgraphID])
 
-  function handleChange(event: React.FormEvent<HTMLInputElement>) {
+  function handteChange(event: React.FormEvent<HTMLInputElement>) {
     setSubgraphID(event.currentTarget.value)
   }
 
@@ -67,7 +67,7 @@ const Home: NextPage = () => {
             aria-label="Search"
             aria-describedby="button-addon2"
             value={subgraphID}
-            onChange={handleChange}
+            onChange={handteChange}
             ref={inputElement}
           />
           <Display subgraphID={subgraphID} loading={loading} status={status} />
@@ -90,8 +90,8 @@ const Home: NextPage = () => {
             miniscan.xyz
           </a>{' '}
           |{' '}
-          <a className="underline" href="https://theybuidl.xyz">
-            theybuidl.xyz
+          <a className="underline" href="https://theybuidt.xyz">
+            theybuidt.xyz
           </a>{' '}
           |{' '}
           <a className="text-purple-600 underline" href="https://okgraph.xyz">
@@ -134,5 +134,33 @@ function Display({
 }
 
 const Status = (props: SubgraphIndexingStatus) => {
-  return <div>{JSON.stringify(props)}</div>
+  const chain = props.chains[0]
+  return (
+    <div>
+      {/* {JSON.stringify(props)} */}
+      <div className="my-3 flex flex-row justify-around">
+        <p>network: {chain.network}</p>
+        <p>
+          health:{' '}
+          {props.health === 'healthy'
+            ? '✅'
+            : props.health === 'unhealthy'
+            ? '⚠️'
+            : '❌'}
+        </p>
+        <p>synced: {props.synced ? '✅' : '❌'}</p>
+        <p>entities: {props.entityCount}</p>
+      </div>
+      <div className="my-3 flex flex-row justify-around">
+        {chain.earliestBlock && <p>start: {chain.earliestBlock?.number}</p>}
+        {chain.latestBlock && <p>synced: {chain.latestBlock?.number}</p>}
+        {chain.chainHeadBlock && <p>last: {chain.chainHeadBlock?.number}</p>}
+      </div>
+      {props.fatalError && (
+        <div className="rounded-md border border-red-600 p-1 text-sm text-red-600">
+          {props.fatalError?.message}
+        </div>
+      )}
+    </div>
+  )
 }
