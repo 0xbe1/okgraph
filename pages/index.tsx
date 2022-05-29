@@ -13,12 +13,18 @@ const Home: NextPage = () => {
     }
   }, [])
 
+  // It could either be Qm-starting ID, or "org/subgraph" name
   const [subgraphID, setSubgraphID] = useState('')
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState<SubgraphIndexingStatus | null>(null)
-  const validSubgraphID = subgraphID.length === 46
 
-  useEffect(() => {
+  function handleChange(event: React.FormEvent<HTMLInputElement>) {
+    // TODO: should i
+    // setStatus(null)
+    setSubgraphID(event.currentTarget.value)
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLInputElement>) {
     async function fetchData() {
       setLoading(true)
       try {
@@ -29,13 +35,12 @@ const Home: NextPage = () => {
       }
       setLoading(false)
     }
-    if (validSubgraphID) {
+
+    event.preventDefault()
+
+    if (isValidID(subgraphID) || isValidName(subgraphID)) {
       fetchData()
     }
-  }, [subgraphID])
-
-  function handteChange(event: React.FormEvent<HTMLInputElement>) {
-    setSubgraphID(event.currentTarget.value)
   }
 
   return (
@@ -53,11 +58,16 @@ const Home: NextPage = () => {
           <input
             type="text"
             className="form-control relative my-5 block w-full min-w-0 flex-auto rounded border border-solid border-purple-600 bg-white px-3 py-1.5 text-center text-base font-normal text-gray-700 outline-none"
-            placeholder="Subgraph ID"
+            placeholder={'"Qm..." or "org/subgraph"'}
             aria-label="Search"
             aria-describedby="button-addon2"
             value={subgraphID}
-            onChange={handteChange}
+            onChange={handleChange}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleSubmit(e)
+              }
+            }}
             ref={inputElement}
           />
           <Display subgraphID={subgraphID} loading={loading} status={status} />
@@ -121,11 +131,11 @@ function Display({
         >
           checking subgraph health
         </a>
-        ? Just put an ID 👆
+        ? Put an ID or a name 👆
       </p>
     )
   }
-  if (subgraphID.length !== 46) {
+  if (!isValidID(subgraphID) && !isValidName(subgraphID)) {
     return <p className="text-center">Invalid subgraph ID</p>
   }
   if (loading) {
@@ -177,5 +187,15 @@ const Status = (props: SubgraphIndexingStatus) => {
           </div>
         ))}
     </div>
+  )
+}
+
+export function isValidID(id: string): boolean {
+  return id.length === 46 && id.startsWith('Qm')
+}
+
+export function isValidName(name: string): boolean {
+  return (
+    name.split('/').length === 2 && !name.startsWith('/') && !name.endsWith('/')
   )
 }

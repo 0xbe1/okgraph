@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios'
+import { isValidID, isValidName } from '..'
 
 interface Block {
   hash: string
@@ -55,11 +56,7 @@ export default async function handler(
 ) {
   const subgraphID = req.query['subgraphID'] as string
   try {
-    const resp = await axios.post(
-      'https://api.thegraph.com/index-node/graphql',
-      JSON.stringify({ query: indexingStatusQuery(subgraphID) })
-    )
-    const data = resp.data.data.indexingStatuses[0] as SubgraphIndexingStatus
+    const data = await fetchStatus(subgraphID)
     res.status(200).send({
       data,
     })
@@ -73,9 +70,20 @@ export default async function handler(
   }
 }
 
-function indexingStatusQuery(subgraphID: string): string {
-  return `{
-        indexingStatuses(subgraphs: ["${subgraphID}"]) {
+async function fetchStatus(
+  subgraphID: string
+): Promise<SubgraphIndexingStatus> {
+  let queryName = ''
+  let queryParams = ''
+  if (isValidID(subgraphID)) {
+    queryName = 'indexingStatuses'
+    queryParams = `(subgraphs: ["${subgraphID}"])`
+  } else if (isValidName(subgraphID)) {
+    queryName = 'indexingStatusesForSubgraphName'
+    queryParams = `(subgraphName: "${subgraphID}")`
+  }
+  const query = `{
+        ${queryName}${queryParams}{
           subgraph
           synced
           health
@@ -111,4 +119,9 @@ function indexingStatusQuery(subgraphID: string): string {
           node
         }
       }`
+  const resp = await axios.post(
+    'https://api.thegraph.com/index-node/graphql',
+    JSON.stringify({ query })
+  )
+  return resp.data.data[queryName][0] as SubgraphIndexingStatus
 }
