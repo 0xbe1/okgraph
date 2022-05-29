@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios'
-import { Result } from '..'
 
 interface Block {
   hash: string
@@ -32,6 +31,16 @@ export interface SubgraphIndexingStatus {
   entityCount: string
   node?: string
 }
+
+type Result<T> =
+  | {
+      data: T
+      error?: never
+    }
+  | {
+      data?: never
+      error: { message: string }
+    }
 
 // Uncomment below to debug
 // axios.interceptors.request.use((request) => {

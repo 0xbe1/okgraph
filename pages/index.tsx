@@ -4,16 +4,6 @@ import Head from 'next/head'
 import React, { useEffect, useState } from 'react'
 import { SubgraphIndexingStatus } from './api/status'
 
-export type Result<T> =
-  | {
-      data: T
-      error?: never
-    }
-  | {
-      data?: never
-      error: { message: string }
-    }
-
 const Home: NextPage = () => {
   // autofocus input, see https://reactjs.org/docs/hooks-reference.html#useref
   const inputElement = React.useRef<HTMLInputElement>(null)
