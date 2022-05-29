@@ -71,6 +71,9 @@ const Home: NextPage = () => {
             0xbe1
           </a>{' '}
           |{' '}
+          <a className="underline" href="https://github.com/0xbe1/okgraph">
+            Code
+          </a>{' '}
           <a className="underline" href="https://discord.gg/u5KUjNZ8wy">
             Community
           </a>
