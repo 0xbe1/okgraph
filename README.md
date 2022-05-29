@@ -1,3 +1,3 @@
-# name3
+# okgraph
 
-Find you a shinny name in web3.
+Is the subgraph OK?
