@@ -26,7 +26,8 @@ export interface SubgraphIndexingStatus {
   synced: boolean
   health: 'healthy' | 'unhealthy' | 'failed'
   fatalError?: SubgraphError
-  nonFatalErrors: SubgraphError[]
+  // it may or may not be in the response body
+  nonFatalErrors?: SubgraphError[]
   chains: ChainIndexingStatus[]
   entityCount: string
   node?: string

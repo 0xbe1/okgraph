@@ -130,7 +130,7 @@ const Status = (props: SubgraphIndexingStatus) => {
   return (
     <div>
       {/* {JSON.stringify(props)} */}
-      <div className="my-3 flex flex-row justify-around">
+      <div className="my-2 flex flex-row justify-around">
         <p>network: {chain.network}</p>
         <p>
           health:{' '}
@@ -143,16 +143,25 @@ const Status = (props: SubgraphIndexingStatus) => {
         <p>synced: {props.synced ? '✅' : '❌'}</p>
         <p>entities: {props.entityCount}</p>
       </div>
-      <div className="my-3 flex flex-row justify-around">
+      <div className="my-2 flex flex-row justify-around">
         {chain.earliestBlock && <p>start: {chain.earliestBlock?.number}</p>}
         {chain.latestBlock && <p>synced: {chain.latestBlock?.number}</p>}
         {chain.chainHeadBlock && <p>last: {chain.chainHeadBlock?.number}</p>}
       </div>
       {props.fatalError && (
-        <div className="rounded-md border border-red-600 p-1 text-sm text-red-600">
+        <div className="my-2 rounded-md border border-red-600 p-1 text-sm text-red-600">
           {props.fatalError?.message}
         </div>
       )}
+      {props.nonFatalErrors &&
+        props.nonFatalErrors.map((nonFatalError, i) => (
+          <div
+            key={i}
+            className="my-2 rounded-md border border-yellow-600 p-1 text-sm text-yellow-600"
+          >
+            {nonFatalError.message}
+          </div>
+        ))}
     </div>
   )
 }
