@@ -112,7 +112,18 @@ function Display({
   status: SubgraphIndexingStatus | null
 }) {
   if (subgraphID.length === 0) {
-    return <p className="text-center">Paste the ID</p>
+    return (
+      <p className="text-center">
+        Tired of{' '}
+        <a
+          className="underline"
+          href="https://thegraph.com/docs/en/hosted-service/deploy-subgraph-hosted/#checking-subgraph-health"
+        >
+          checking subgraph health
+        </a>
+        ? Just put an ID 👆
+      </p>
+    )
   }
   if (subgraphID.length !== 46) {
     return <p className="text-center">Invalid subgraph ID</p>
