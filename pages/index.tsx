@@ -109,16 +109,18 @@ function Display({
   status: SubgraphIndexingStatus | null
 }) {
   if (subgraphID.length === 0) {
-    return <p>Paste the ID</p>
+    return <p className="text-center">Paste the ID</p>
   }
   if (subgraphID.length !== 46) {
-    return <p>Invalid subgraph ID</p>
+    return <p className="text-center">Invalid subgraph ID</p>
   }
   if (loading) {
-    return <p>Loading ...</p>
+    return <p className="text-center">Loading ...</p>
   }
   if (!status) {
-    return <p>This should not happen</p>
+    return (
+      <p className="text-center">Failed to fetch status, check the ID plz</p>
+    )
   }
   return <Status {...status} />
 }
