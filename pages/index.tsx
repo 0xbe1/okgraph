@@ -106,8 +106,8 @@ const Home: NextPage = () => {
             miniscan.xyz
           </a>{' '}
           |{' '}
-          <a className="underline" href="https://theybuidt.xyz">
-            theybuidt.xyz
+          <a className="underline" href="https://theybuidl.xyz">
+            theybuidl.xyz
           </a>{' '}
           |{' '}
           <a className="text-purple-600 underline" href="https://okgraph.xyz">
