@@ -162,22 +162,35 @@ const Status = (props: SubgraphIndexingStatus) => {
     <div>
       {/* {JSON.stringify(props)} */}
       <div className="my-2 flex flex-row justify-around">
-        <p>network: {chain.network}</p>
+        <p>network:{chain.network}</p>
         <p>
-          health:{' '}
+          health:
           {props.health === 'healthy'
             ? '✅'
             : props.health === 'unhealthy'
             ? '⚠️'
             : '❌'}
         </p>
-        <p>synced: {props.synced ? '✅' : '❌'}</p>
-        <p>entities: {props.entityCount}</p>
+        <p>synced:{props.synced ? '✅' : '❌'}</p>
+        <p>entities:{props.entityCount}</p>
       </div>
       <div className="my-2 flex flex-row justify-around">
-        {chain.earliestBlock && <p>start: {chain.earliestBlock?.number}</p>}
-        {chain.latestBlock && <p>synced: {chain.latestBlock?.number}</p>}
-        {chain.chainHeadBlock && <p>last: {chain.chainHeadBlock?.number}</p>}
+        {chain.earliestBlock && <p>start:{chain.earliestBlock?.number}</p>}
+        {chain.latestBlock && <p>synced:{chain.latestBlock?.number}</p>}
+        {chain.chainHeadBlock && <p>last:{chain.chainHeadBlock?.number}</p>}
+        {chain.earliestBlock && chain.latestBlock && chain.chainHeadBlock && (
+          <p>
+            progress:
+            {(
+              (100 *
+                (Number(chain.latestBlock?.number) -
+                  Number(chain.earliestBlock?.number))) /
+              (Number(chain.chainHeadBlock?.number) -
+                Number(chain.earliestBlock?.number))
+            ).toFixed(2)}
+            %
+          </p>
+        )}
       </div>
       {props.fatalError && (
         <div className="my-2 rounded-md border border-red-600 p-1 text-sm text-red-600">
