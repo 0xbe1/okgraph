@@ -48,7 +48,7 @@ const Home: NextPage = () => {
   return (
     <div className="flex min-h-screen flex-col items-center font-mono">
       <Head>
-        <title>okgraph</title>
+        <title>👌graph</title>
         <link rel="icon" href="/favicon.ico" />
         <script
           data-token="IL20I51UVJ95"
@@ -60,7 +60,7 @@ const Home: NextPage = () => {
       <main className="flex w-full flex-1 items-center sm:w-3/5 lg:w-2/5">
         <div className="w-full">
           <div className=" text-center">
-            <p className="text-6xl font-bold text-purple-600">okgraph</p>
+            <p className="text-6xl font-bold text-purple-600">👌graph</p>
           </div>
           <input
             type="text"
@@ -160,7 +160,6 @@ const Status = (props: SubgraphIndexingStatus) => {
   const chain = props.chains[0]
   return (
     <div>
-      {/* {JSON.stringify(props)} */}
       <div className="my-2 grid grid-cols-1">
         <div>
           <div>ID</div>
