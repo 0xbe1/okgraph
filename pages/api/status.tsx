@@ -22,6 +22,42 @@ interface ChainIndexingStatus {
   lastHealthyBlock?: Block
 }
 
+const QUERY_BODY = `{
+  subgraph
+  synced
+  health
+  entityCount
+  fatalError {
+    handler
+    message
+    deterministic
+    block {
+      hash
+      number
+    }
+  }
+  chains {
+    network
+    chainHeadBlock {
+      number
+      hash
+    }
+    earliestBlock {
+      number
+      hash
+    }
+    latestBlock {
+      number
+      hash
+    }
+    lastHealthyBlock {
+      hash
+      number
+    }
+  }
+  node
+}`
+
 export interface SubgraphIndexingStatus {
   subgraph: string
   synced: boolean
@@ -46,8 +82,12 @@ type Result<T> =
 
 // Uncomment below to debug
 // axios.interceptors.request.use((request) => {
-//   console.log('Starting Request', JSON.stringify(request, null, 2))
+//   console.log('Request:', JSON.stringify(request, null, 2))
 //   return request
+// })
+// axios.interceptors.response.use(response => {
+//   console.log('Response:', JSON.stringify(response, null, 2))
+//   return response
 // })
 
 export default async function handler(
@@ -57,71 +97,56 @@ export default async function handler(
   const subgraphID = req.query['subgraphID'] as string
   try {
     const data = await fetchStatus(subgraphID)
+    if (data === null) {
+      res.status(200).send({
+        error: {
+          message: 'not found',
+        },
+      })
+      return
+    }
     res.status(200).send({
       data,
     })
   } catch (error: any) {
     console.log(JSON.stringify(error, Object.getOwnPropertyNames(error)))
-    return {
+    res.status(200).send({
       error: {
         message: 'unknown error',
       },
-    }
+    })
   }
 }
 
 async function fetchStatus(
   subgraphID: string
-): Promise<SubgraphIndexingStatus> {
-  let queryName = ''
-  let queryParams = ''
+): Promise<SubgraphIndexingStatus | null> {
   if (isValidID(subgraphID)) {
-    queryName = 'indexingStatuses'
-    queryParams = `(subgraphs: ["${subgraphID}"])`
-  } else if (isValidName(subgraphID)) {
-    queryName = 'indexingStatusesForSubgraphName'
-    queryParams = `(subgraphName: "${subgraphID}")`
+    const query = `{ indexingStatuses(subgraphs:["${subgraphID}"])${QUERY_BODY} }`
+    const data = (await queryThegraphIndex(query))['indexingStatuses']
+    if (data === null) {
+      return null
+    } else {
+      return data[0] as SubgraphIndexingStatus
+    }
+  } else {
+    const currentVersionQuery = `{ indexingStatusForCurrentVersion(subgraphName:"${subgraphID}")${QUERY_BODY} }`
+    const data = (await queryThegraphIndex(currentVersionQuery))[
+      'indexingStatusForCurrentVersion'
+    ]
+    if (data === null) {
+      return null
+    } else {
+      return data as SubgraphIndexingStatus
+    }
   }
-  const query = `{
-        ${queryName}${queryParams}{
-          subgraph
-          synced
-          health
-          entityCount
-          fatalError {
-            handler
-            message
-            deterministic
-            block {
-              hash
-              number
-            }
-          }
-          chains {
-            network
-            chainHeadBlock {
-              number
-              hash
-            }
-            earliestBlock {
-              number
-              hash
-            }
-            latestBlock {
-              number
-              hash
-            }
-            lastHealthyBlock {
-              hash
-              number
-            }
-          }
-          node
-        }
-      }`
-  const resp = await axios.post(
-    'https://api.thegraph.com/index-node/graphql',
-    JSON.stringify({ query })
-  )
-  return resp.data.data[queryName][0] as SubgraphIndexingStatus
+}
+
+async function queryThegraphIndex(query: string): Promise<any> {
+  return (
+    await axios.post(
+      'https://api.thegraph.com/index-node/graphql',
+      JSON.stringify({ query })
+    )
+  ).data.data
 }
