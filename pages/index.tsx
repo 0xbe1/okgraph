@@ -161,35 +161,71 @@ const Status = (props: SubgraphIndexingStatus) => {
   return (
     <div>
       {/* {JSON.stringify(props)} */}
-      <div className="my-2 flex flex-row justify-around">
-        <p>network:{chain.network}</p>
-        <p>
-          health:
-          {props.health === 'healthy'
-            ? '✅'
-            : props.health === 'unhealthy'
-            ? '⚠️'
-            : '❌'}
-        </p>
-        <p>synced:{props.synced ? '✅' : '❌'}</p>
-        <p>entities:{props.entityCount}</p>
+      <div className="my-2 grid grid-cols-1">
+        <div>
+          <div>ID</div>
+          <div className="text-purple-600">{props.subgraph}</div>
+        </div>
       </div>
-      <div className="my-2 flex flex-row justify-around">
-        {chain.earliestBlock && <p>start:{chain.earliestBlock?.number}</p>}
-        {chain.latestBlock && <p>synced:{chain.latestBlock?.number}</p>}
-        {chain.chainHeadBlock && <p>last:{chain.chainHeadBlock?.number}</p>}
+      <div className="my-2 grid grid-cols-4">
+        <div>
+          <div>Network</div>
+          <div className="text-purple-600">{chain.network}</div>
+        </div>
+        <div>
+          <div>Health</div>
+          <div>
+            {props.health === 'healthy'
+              ? '✅'
+              : props.health === 'unhealthy'
+              ? '⚠️'
+              : '❌'}
+          </div>
+        </div>
+        <div>
+          <div>Synced</div>
+          <div>{props.synced ? '✅' : '❌'}</div>
+        </div>
+        <div>
+          <div>Entities</div>
+          <div className="text-purple-600">{props.entityCount}</div>
+        </div>
+      </div>
+      <div className="my-2 grid grid-cols-4">
+        {chain.earliestBlock && (
+          <div>
+            <div>Start #</div>
+            <div className="text-purple-600">{chain.earliestBlock?.number}</div>
+          </div>
+        )}
+        {chain.latestBlock && (
+          <div>
+            <div>Synced #</div>
+            <div className="text-purple-600">{chain.latestBlock?.number}</div>
+          </div>
+        )}
+        {chain.chainHeadBlock && (
+          <div>
+            <div>Last #</div>
+            <div className="text-purple-600">
+              {chain.chainHeadBlock?.number}
+            </div>
+          </div>
+        )}
         {chain.earliestBlock && chain.latestBlock && chain.chainHeadBlock && (
-          <p>
-            progress:
-            {(
-              (100 *
-                (Number(chain.latestBlock?.number) -
-                  Number(chain.earliestBlock?.number))) /
-              (Number(chain.chainHeadBlock?.number) -
-                Number(chain.earliestBlock?.number))
-            ).toFixed(2)}
-            %
-          </p>
+          <div>
+            <div>Progress</div>
+            <div className="text-purple-600">
+              {(
+                (100 *
+                  (Number(chain.latestBlock?.number) -
+                    Number(chain.earliestBlock?.number))) /
+                (Number(chain.chainHeadBlock?.number) -
+                  Number(chain.earliestBlock?.number))
+              ).toFixed(2)}
+              %
+            </div>
+          </div>
         )}
       </div>
       {props.fatalError && (
