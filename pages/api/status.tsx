@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios'
-import { isValidID, isValidName } from '..'
+import { isValidID } from '..'
 
 interface Block {
   hash: string
@@ -92,7 +92,7 @@ type Result<T> =
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Result<SubgraphIndexingStatus>>
+  res: NextApiResponse<Result<Array<SubgraphIndexingStatus>>>
 ) {
   const subgraphID = req.query['subgraphID'] as string
   try {
@@ -120,26 +120,32 @@ export default async function handler(
 
 async function fetchStatus(
   subgraphID: string
-): Promise<SubgraphIndexingStatus | null> {
+): Promise<Array<SubgraphIndexingStatus> | null> {
   if (isValidID(subgraphID)) {
     const query = `{ indexingStatuses(subgraphs:["${subgraphID}"])${QUERY_BODY} }`
     const data = (await queryThegraphIndex(query))['indexingStatuses']
     if (data === null) {
       return null
-    } else {
-      return data[0] as SubgraphIndexingStatus
     }
-  } else {
-    const currentVersionQuery = `{ indexingStatusForCurrentVersion(subgraphName:"${subgraphID}")${QUERY_BODY} }`
-    const data = (await queryThegraphIndex(currentVersionQuery))[
-      'indexingStatusForCurrentVersion'
-    ]
-    if (data === null) {
-      return null
-    } else {
-      return data as SubgraphIndexingStatus
-    }
+    return data as Array<SubgraphIndexingStatus>
   }
+  let a: Array<SubgraphIndexingStatus> = []
+  const currentVersionQuery = `{ indexingStatusForCurrentVersion(subgraphName:"${subgraphID}")${QUERY_BODY} }`
+  const currentVersionData = (await queryThegraphIndex(currentVersionQuery))[
+    'indexingStatusForCurrentVersion'
+  ]
+  if (currentVersionData === null) {
+    return null
+  }
+  a.push(currentVersionData as SubgraphIndexingStatus)
+  const pendingVersionQuery = `{ indexingStatusForPendingVersion(subgraphName:"${subgraphID}")${QUERY_BODY} }`
+  const pendingVersionData = (await queryThegraphIndex(pendingVersionQuery))[
+    'indexingStatusForPendingVersion'
+  ]
+  if (pendingVersionData !== null) {
+    a.splice(0, 0, pendingVersionData as SubgraphIndexingStatus)
+  }
+  return a
 }
 
 async function queryThegraphIndex(query: string): Promise<any> {

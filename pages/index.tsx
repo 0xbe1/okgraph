@@ -18,16 +18,17 @@ const Home: NextPage = () => {
   const [subgraphID, setSubgraphID] = useState('')
 
   const [loading, setLoading] = useState(false)
-  const [status, setStatus] = useState<SubgraphIndexingStatus | null>(null)
+  const [statuses, setStatuses] =
+    useState<Array<SubgraphIndexingStatus> | null>(null)
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true)
       try {
         const { data } = await axios.get(`api/status?subgraphID=${subgraphID}`)
-        setStatus(data.data)
+        setStatuses(data.data)
       } catch (error: any) {
-        setStatus(null)
+        setStatuses(null)
       }
       setLoading(false)
     }
@@ -77,7 +78,12 @@ const Home: NextPage = () => {
             }}
             ref={inputElement}
           />
-          <Display subgraphID={subgraphID} loading={loading} status={status} />
+          <Display
+            subgraphID={subgraphID}
+            loading={loading}
+            statuses={statuses}
+          />
+          {/* {statuses && statuses.map((status, i) => <Display key={i} subgraphID={subgraphID} loading={loading} status={status} />)} */}
         </div>
       </main>
 
@@ -122,11 +128,11 @@ export default Home
 function Display({
   subgraphID,
   loading,
-  status,
+  statuses,
 }: {
   subgraphID: string
   loading: boolean
-  status: SubgraphIndexingStatus | null
+  statuses: Array<SubgraphIndexingStatus> | null
 }) {
   if (subgraphID.length === 0) {
     return (
@@ -148,18 +154,24 @@ function Display({
   if (loading) {
     return <p className="text-center">Loading ...</p>
   }
-  if (!status) {
+  if (!statuses) {
     return (
       <p className="text-center">Failed to fetch status, check the ID plz</p>
     )
   }
-  return <Status {...status} />
+  return (
+    <div className="flex flex-col space-y-4 divide-y-2 divide-purple-600">
+      {statuses.map((status, i) => (
+        <Status key={i} {...status} />
+      ))}
+    </div>
+  )
 }
 
 const Status = (props: SubgraphIndexingStatus) => {
   const chain = props.chains[0]
   return (
-    <div>
+    <div className="p-2">
       <div className="my-2 grid grid-cols-1">
         <div>
           <div>ID</div>
