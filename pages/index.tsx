@@ -178,6 +178,16 @@ const Status = (props: SubgraphIndexingStatus) => {
           <div className="text-purple-600">{props.subgraph}</div>
         </div>
       </div>
+      <div className="my-2 grid grid-cols-1">
+        <div>
+          <div>API</div>
+          <div>
+            <a href={`https://api.thegraph.com/subgraphs/id/${props.subgraph}`}>
+              🔗
+            </a>
+          </div>
+        </div>
+      </div>
       <div className="my-2 grid grid-cols-4">
         <div>
           <div>Network</div>
