@@ -178,11 +178,34 @@ const Status = (props: SubgraphIndexingStatus) => {
           <div className="text-purple-600">{props.subgraph}</div>
         </div>
       </div>
-      <div className="my-2 grid grid-cols-1">
+      <div className="my-2 grid grid-cols-2">
         <div>
           <div>API</div>
           <div>
             <a href={`https://api.thegraph.com/subgraphs/id/${props.subgraph}`}>
+              🔗
+            </a>
+          </div>
+        </div>
+        <div>
+          <div>Logs</div>
+          <div>
+            <a
+              href={`https://api.thegraph.com/explorer/graphql?query=${encodeURIComponent(
+                `{
+  subgraphLogs(
+    subgraphId: "${props.subgraph}"
+    first: 100
+    order: NewestFirst
+    filters: ["error", "warning"]
+    searchText: ""
+  ) {
+    timestamp
+    text
+  }
+}`
+              )}`}
+            >
               🔗
             </a>
           </div>
