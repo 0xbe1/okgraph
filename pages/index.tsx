@@ -49,11 +49,6 @@ const Home: NextPage = () => {
       <Head>
         <title>👌graph</title>
         <link rel="icon" href="/favicon.ico" />
-        <script
-          data-token="IL20I51UVJ95"
-          async
-          src="https://cdn.splitbee.io/sb.js"
-        ></script>
       </Head>
 
       <main className="flex w-full flex-1 items-center sm:w-3/5 lg:w-2/5">
