@@ -21,28 +21,26 @@ const Home: NextPage = () => {
   const [statuses, setStatuses] =
     useState<Array<SubgraphIndexingStatus> | null>(null)
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true)
-      try {
-        const { data } = await axios.get(`api/status?subgraphID=${subgraphID}`)
-        setStatuses(data.data)
-      } catch (error: any) {
-        setStatuses(null)
-      }
-      setLoading(false)
-    }
-    if (isValidID(subgraphID) || isValidName(subgraphID)) {
-      fetchData()
-    }
-  }, [subgraphID])
-
   function handleChange(event: React.FormEvent<HTMLInputElement>) {
     setWipSubgraphID(event.currentTarget.value)
   }
 
+  async function fetchData(subgraphID: string) {
+    setLoading(true)
+    try {
+      const { data } = await axios.get(`api/status?subgraphID=${subgraphID}`)
+      setStatuses(data.data)
+    } catch (error: any) {
+      setStatuses(null)
+    }
+    setLoading(false)
+  }
+
   function handleSubmit(event: React.FormEvent<HTMLInputElement>) {
     event.preventDefault()
+    if (isValidID(wipSubgraphID) || isValidName(wipSubgraphID)) {
+      fetchData(wipSubgraphID)
+    }
     setSubgraphID(wipSubgraphID)
   }
 
