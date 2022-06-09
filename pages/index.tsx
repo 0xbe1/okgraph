@@ -1,8 +1,19 @@
 import axios from 'axios'
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import { useQueryState } from 'next-usequerystate'
 import React, { useEffect, useState } from 'react'
 import { SubgraphIndexingStatus } from './api/status'
+
+export type Result<T> =
+  | {
+      data: T
+      error?: never
+    }
+  | {
+      data?: never
+      error: { message: string }
+    }
 
 const Home: NextPage = () => {
   // autofocus input, see https://reactjs.org/docs/hooks-reference.html#useref
@@ -13,35 +24,45 @@ const Home: NextPage = () => {
     }
   }, [])
 
-  // It could either be Qm-starting ID, or "org/subgraph" name
-  const [wipSubgraphID, setWipSubgraphID] = useState('')
-  const [subgraphID, setSubgraphID] = useState('')
-
+  const [q, setQ] = useQueryState('q')
   const [loading, setLoading] = useState(false)
   const [statuses, setStatuses] =
     useState<Array<SubgraphIndexingStatus> | null>(null)
-
-  function handleChange(event: React.FormEvent<HTMLInputElement>) {
-    setWipSubgraphID(event.currentTarget.value)
-  }
+  const [errMsg, setErrMsg] = useState<string | null>(null)
 
   async function fetchData(subgraphID: string) {
     setLoading(true)
     try {
-      const { data } = await axios.get(`api/status?subgraphID=${subgraphID}`)
-      setStatuses(data.data)
+      const resp = await axios.get(`api/status?subgraphID=${subgraphID}`)
+      const result = resp.data as Result<Array<SubgraphIndexingStatus>>
+      if (result.error) {
+        setErrMsg(result.error.message)
+      } else {
+        setStatuses(result.data)
+      }
     } catch (error: any) {
-      setStatuses(null)
+      setErrMsg('axios.get failed')
     }
     setLoading(false)
   }
 
+  useEffect(() => {
+    if (q && (isValidID(q) || isValidName(q))) {
+      fetchData(q)
+    }
+  }, [])
+
+  function handleChange(event: React.FormEvent<HTMLInputElement>) {
+    setStatuses(null)
+    setErrMsg(null)
+    setQ(event.currentTarget.value, { scroll: false, shallow: true })
+  }
+
   function handleSubmit(event: React.FormEvent<HTMLInputElement>) {
     event.preventDefault()
-    if (isValidID(wipSubgraphID) || isValidName(wipSubgraphID)) {
-      fetchData(wipSubgraphID)
+    if (q && (isValidID(q) || isValidName(q))) {
+      fetchData(q)
     }
-    setSubgraphID(wipSubgraphID)
   }
 
   return (
@@ -62,7 +83,7 @@ const Home: NextPage = () => {
             placeholder={'"Qm..." or "org/subgraph"'}
             aria-label="Search"
             aria-describedby="button-addon2"
-            value={wipSubgraphID}
+            value={q || ''}
             onChange={handleChange}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
@@ -72,11 +93,11 @@ const Home: NextPage = () => {
             ref={inputElement}
           />
           <Display
-            subgraphID={subgraphID}
+            subgraphID={q || ''}
             loading={loading}
             statuses={statuses}
+            errMsg={errMsg}
           />
-          {/* {statuses && statuses.map((status, i) => <Display key={i} subgraphID={subgraphID} loading={loading} status={status} />)} */}
         </div>
       </main>
 
@@ -122,10 +143,12 @@ function Display({
   subgraphID,
   loading,
   statuses,
+  errMsg,
 }: {
   subgraphID: string
   loading: boolean
   statuses: Array<SubgraphIndexingStatus> | null
+  errMsg: string | null
 }) {
   if (subgraphID.length === 0) {
     return (
@@ -137,7 +160,7 @@ function Display({
         >
           checking subgraph health
         </a>
-        ? Put an ID or a name 👆
+        ? Put an Qm-ID or a name 👆
       </p>
     )
   }
@@ -147,18 +170,19 @@ function Display({
   if (loading) {
     return <p className="text-center">Loading ...</p>
   }
-  if (!statuses) {
+  if (errMsg) {
+    return <p className="text-center">{errMsg}</p>
+  }
+  if (statuses) {
     return (
-      <p className="text-center">Failed to fetch status, check the ID plz</p>
+      <div className="flex flex-col space-y-4 divide-y-2 divide-purple-600">
+        {statuses.map((status, i) => (
+          <Status key={i} {...status} />
+        ))}
+      </div>
     )
   }
-  return (
-    <div className="flex flex-col space-y-4 divide-y-2 divide-purple-600">
-      {statuses.map((status, i) => (
-        <Status key={i} {...status} />
-      ))}
-    </div>
-  )
+  return <p className="text-center">Typing ...</p>
 }
 
 const Status = (props: SubgraphIndexingStatus) => {
