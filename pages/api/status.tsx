@@ -90,7 +90,7 @@ export default async function handler(
     if (data === null) {
       res.status(200).send({
         error: {
-          message: 'not found',
+          message: 'subgraph not found',
         },
       })
       return

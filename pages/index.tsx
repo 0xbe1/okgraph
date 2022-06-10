@@ -76,6 +76,9 @@ const Home: NextPage = () => {
         <div className="w-full">
           <div className=" text-center">
             <p className="text-6xl font-bold text-purple-600">👌graph</p>
+            <p className="my-5 text-xl text-purple-600">
+              🚀 A lightning fast subgraph UI
+            </p>
           </div>
           <input
             type="text"
@@ -165,7 +168,7 @@ function Display({
     )
   }
   if (!isValidID(subgraphID) && !isValidName(subgraphID)) {
-    return <p className="text-center">Invalid subgraph ID</p>
+    return <p className="text-center">Typing ... Invalid subgraph ID</p>
   }
   if (loading) {
     return <p className="text-center">Loading ...</p>
@@ -182,7 +185,7 @@ function Display({
       </div>
     )
   }
-  return <p className="text-center">Typing ...</p>
+  return <p className="text-center">Typing ... Press enter when finished</p>
 }
 
 const Status = (props: SubgraphIndexingStatus) => {
