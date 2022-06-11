@@ -252,27 +252,33 @@ const Status = (props: SubgraphIndexingStatus) => {
         </div>
         <div>
           <div>Entities</div>
-          <div className="text-purple-600">{props.entityCount}</div>
+          <div className="text-purple-600">
+            {parseInt(props.entityCount).toLocaleString('en-US')}
+          </div>
         </div>
       </div>
       <div className="my-2 grid grid-cols-4">
         {chain.earliestBlock && (
           <div>
             <div>Start #</div>
-            <div className="text-purple-600">{chain.earliestBlock?.number}</div>
+            <div className="text-purple-600">
+              {parseInt(chain.earliestBlock.number).toLocaleString('en-US')}
+            </div>
           </div>
         )}
         {chain.latestBlock && (
           <div>
             <div>Synced #</div>
-            <div className="text-purple-600">{chain.latestBlock?.number}</div>
+            <div className="text-purple-600">
+              {parseInt(chain.latestBlock.number).toLocaleString('en-US')}
+            </div>
           </div>
         )}
         {chain.chainHeadBlock && (
           <div>
             <div>Last #</div>
             <div className="text-purple-600">
-              {chain.chainHeadBlock?.number}
+              {parseInt(chain.chainHeadBlock.number).toLocaleString('en-US')}
             </div>
           </div>
         )}
