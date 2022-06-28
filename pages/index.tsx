@@ -223,25 +223,24 @@ const Status = (props: SubgraphIndexingStatus) => {
   const chain = props.chains[0]
   return (
     <div className="p-2">
-      <div className="my-3 grid grid-cols-1">
+      <div className="my-3 grid grid-cols-2 gap-4">
         <div>
           <div>ID</div>
-          <div className="text-purple-600">{props.subgraph}</div>
-        </div>
-      </div>
-      <div className="my-3 grid grid-cols-2">
-        <div>
-          <div>API</div>
-          <div>
-            <a href={`https://api.thegraph.com/subgraphs/id/${props.subgraph}`}>
-              🔗
-            </a>
-          </div>
+          <div className="truncate text-purple-600">{props.subgraph}</div>
         </div>
         <div>
-          <div>Logs</div>
+          <div>Links</div>
           <div>
             <a
+              className="text-purple-600 hover:underline"
+              href={`https://api.thegraph.com/subgraphs/id/${props.subgraph}`}
+            >
+              API
+            </a>
+            {' ⛓️ '}
+
+            <a
+              className="text-purple-600 hover:underline"
               href={`https://api.thegraph.com/explorer/graphql?query=${encodeURIComponent(
                 `{
   subgraphLogs(
@@ -257,12 +256,12 @@ const Status = (props: SubgraphIndexingStatus) => {
 }`
               )}`}
             >
-              🔗
+              Logs
             </a>
           </div>
         </div>
       </div>
-      <div className="my-3 grid grid-cols-4">
+      <div className="my-3 grid grid-cols-4 gap-4">
         <div>
           <div>Network</div>
           <div className="text-purple-600">{chain.network}</div>
@@ -288,7 +287,7 @@ const Status = (props: SubgraphIndexingStatus) => {
           </div>
         </div>
       </div>
-      <div className="my-3 grid grid-cols-4">
+      <div className="my-3 grid grid-cols-4 gap-4">
         {chain.earliestBlock && (
           <div>
             <div>Start #</div>
