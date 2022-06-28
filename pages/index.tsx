@@ -90,7 +90,7 @@ const Home: NextPage = () => {
       <main className="flex w-full flex-1 items-center sm:w-3/5 lg:w-2/5">
         <div className="w-full">
           <div className=" text-center">
-            <p className="text-6xl font-bold text-purple-600">👌graph</p>
+            <p className="text-6xl font-bold text-purple-600 mt-5">👌graph</p>
             <p className="my-5 text-xl text-purple-600">
               🚀 A lightning fast subgraph UI
             </p>
@@ -111,7 +111,7 @@ const Home: NextPage = () => {
             ref={inputElement}
           />
           {autoRefresh && (
-            <p className="rounded bg-purple-300 p-2 text-center text-sm">
+            <p className="my-2 rounded bg-purple-300 p-2 text-center text-sm">
               ⏰ Auto refresh every 30s. Last updated at{' '}
               {new Date().toLocaleTimeString('en-US')}
             </p>
@@ -322,15 +322,18 @@ const Status = (props: SubgraphIndexingStatus) => {
       </div>
       {props.fatalError && (
         <div className="my-2 flex flex-col space-y-3 rounded-md border border-red-600 p-2 text-sm text-red-600">
-          {props.fatalError?.handler && (
-            <div>handler: {props.fatalError?.handler}</div>
-          )}
-          {props.fatalError?.block?.number && (
-            <div>block number: {props.fatalError?.block?.number}</div>
-          )}
-          {props.fatalError?.message && (
-            <div>message: {props.fatalError?.message}</div>
-          )}
+          A{' '}
+          {props.fatalError?.deterministic
+            ? 'determinstic'
+            : 'non-deterministic'}{' '}
+          fatal error occured
+          {props.fatalError?.block
+            ? ` at block ${props.fatalError?.block?.number}`
+            : ''}
+          {props.fatalError?.handler
+            ? ` on handler ${props.fatalError?.handler}`
+            : ''}
+          : {props.fatalError?.message}
         </div>
       )}
       {props.nonFatalErrors &&
