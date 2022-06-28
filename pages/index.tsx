@@ -6,6 +6,8 @@ import React, { useEffect, useState } from 'react'
 import { useInterval } from 'react-use'
 import { SubgraphIndexingStatus } from './api/status'
 
+const AUTO_REFRESH_INTERVAL = 30
+
 export type Result<T> =
   | {
       data: T
@@ -26,11 +28,13 @@ const Home: NextPage = () => {
   }, [])
 
   const [q, setQ] = useQueryState('q')
+  const [tempQ, setTempQ] = useState(q)
   const [loading, setLoading] = useState(false)
   const [statuses, setStatuses] =
     useState<Array<SubgraphIndexingStatus> | null>(null)
   const [errMsg, setErrMsg] = useState<string | null>(null)
   const [autoRefresh, setAutoRefresh] = useState<boolean>(false)
+  const [updatedAt, setUpdatedAt] = useState<Date>(new Date())
 
   async function fetchData(subgraphID: string) {
     setLoading(true)
@@ -52,15 +56,18 @@ const Home: NextPage = () => {
     setLoading(false)
   }
 
+  // fetch on interval
   useInterval(
     () => {
       if (q && (isValidID(q) || isValidName(q))) {
         fetchData(q)
+        setUpdatedAt(new Date())
       }
     },
-    autoRefresh ? 30 * 1000 : null
+    autoRefresh ? AUTO_REFRESH_INTERVAL * 1000 : null
   )
 
+  // fetch on load if query params is not empty
   useEffect(() => {
     if (q && (isValidID(q) || isValidName(q))) {
       fetchData(q)
@@ -68,13 +75,17 @@ const Home: NextPage = () => {
   }, [])
 
   function handleChange(event: React.FormEvent<HTMLInputElement>) {
-    setStatuses(null)
-    setErrMsg(null)
-    setQ(event.currentTarget.value, { scroll: false, shallow: true })
+    // TODO: after visiting to a shared okgraph url, then delete the search string, press enter, it won't trigger Input.onChange
+    // console.log(`changed to [${event.currentTarget.value}]`)
+    setTempQ(event.currentTarget.value)
   }
 
   function handleSubmit(event: React.FormEvent<HTMLInputElement>) {
     event.preventDefault()
+    setStatuses(null)
+    setErrMsg(null)
+    const q = tempQ
+    setQ(q, { scroll: false, shallow: true })
     if (q && (isValidID(q) || isValidName(q))) {
       fetchData(q)
     }
@@ -97,11 +108,9 @@ const Home: NextPage = () => {
           </div>
           <input
             type="text"
-            className="my-5 w-full rounded border border-solid border-purple-600 bg-white px-3 py-1.5 text-center outline-none"
+            className="my-3 w-full rounded border border-solid border-purple-600 bg-white px-3 py-1.5 text-center outline-none"
             placeholder={'"Qm..." or "org/subgraph"'}
-            aria-label="Search"
-            aria-describedby="button-addon2"
-            value={q || ''}
+            value={tempQ || ''}
             onChange={handleChange}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
@@ -111,9 +120,9 @@ const Home: NextPage = () => {
             ref={inputElement}
           />
           {autoRefresh && (
-            <p className="my-2 rounded bg-purple-300 p-2 text-center text-sm">
+            <p className="my-3 rounded bg-purple-300 p-2 text-center text-sm">
               ⏰ Auto refresh every 30s. Last updated at{' '}
-              {new Date().toLocaleTimeString('en-US')}
+              {updatedAt.toLocaleTimeString('en-US')}
             </p>
           )}
           <Display
@@ -177,7 +186,7 @@ function Display({
 }) {
   if (subgraphID.length === 0) {
     return (
-      <p className="text-center">
+      <p className="my-3 text-center">
         Tired of{' '}
         <a
           className="underline"
@@ -190,13 +199,13 @@ function Display({
     )
   }
   if (!isValidID(subgraphID) && !isValidName(subgraphID)) {
-    return <p className="text-center">Typing ... Invalid subgraph ID</p>
+    return <p className="my-3 text-center">❌ Invalid subgraph ID</p>
   }
   if (loading) {
-    return <p className="text-center">Loading ...</p>
+    return <p className="my-3 text-center">⏳ Loading ...</p>
   }
   if (errMsg) {
-    return <p className="text-center">{errMsg}</p>
+    return <p className="my-3 text-center">{errMsg}</p>
   }
   if (statuses) {
     return (
@@ -207,20 +216,20 @@ function Display({
       </div>
     )
   }
-  return <p className="text-center">Typing ... Press enter when finished</p>
+  return <p className="my-3 text-center">🥲 This should not happen</p>
 }
 
 const Status = (props: SubgraphIndexingStatus) => {
   const chain = props.chains[0]
   return (
     <div className="p-2">
-      <div className="my-2 grid grid-cols-1">
+      <div className="my-3 grid grid-cols-1">
         <div>
           <div>ID</div>
           <div className="text-purple-600">{props.subgraph}</div>
         </div>
       </div>
-      <div className="my-2 grid grid-cols-2">
+      <div className="my-3 grid grid-cols-2">
         <div>
           <div>API</div>
           <div>
@@ -253,7 +262,7 @@ const Status = (props: SubgraphIndexingStatus) => {
           </div>
         </div>
       </div>
-      <div className="my-2 grid grid-cols-4">
+      <div className="my-3 grid grid-cols-4">
         <div>
           <div>Network</div>
           <div className="text-purple-600">{chain.network}</div>
@@ -279,7 +288,7 @@ const Status = (props: SubgraphIndexingStatus) => {
           </div>
         </div>
       </div>
-      <div className="my-2 grid grid-cols-4">
+      <div className="my-3 grid grid-cols-4">
         {chain.earliestBlock && (
           <div>
             <div>Start #</div>
@@ -321,7 +330,7 @@ const Status = (props: SubgraphIndexingStatus) => {
         )}
       </div>
       {props.fatalError && (
-        <div className="my-2 flex flex-col space-y-3 rounded-md border border-red-600 p-2 text-sm text-red-600">
+        <div className="my-3 flex flex-col space-y-3 rounded-md border border-red-600 p-2 text-sm text-red-600">
           A{' '}
           {props.fatalError?.deterministic
             ? 'determinstic'
@@ -340,7 +349,7 @@ const Status = (props: SubgraphIndexingStatus) => {
         props.nonFatalErrors.map((nonFatalError, i) => (
           <div
             key={i}
-            className="my-2 rounded-md border border-yellow-600 p-1 text-sm text-yellow-600"
+            className="my-3 rounded-md border border-yellow-600 p-1 text-sm text-yellow-600"
           >
             {nonFatalError.handler && (
               <div>handler: {nonFatalError.handler}</div>
