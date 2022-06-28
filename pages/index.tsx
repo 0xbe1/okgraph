@@ -90,14 +90,14 @@ const Home: NextPage = () => {
       <main className="flex w-full flex-1 items-center sm:w-3/5 lg:w-2/5">
         <div className="w-full">
           <div className=" text-center">
-            <p className="text-6xl font-bold text-purple-600 mt-5">👌graph</p>
+            <p className="mt-5 text-6xl font-bold text-purple-600">👌graph</p>
             <p className="my-5 text-xl text-purple-600">
               🚀 A lightning fast subgraph UI
             </p>
           </div>
           <input
             type="text"
-            className="form-control relative my-5 block w-full min-w-0 flex-auto rounded border border-solid border-purple-600 bg-white px-3 py-1.5 text-center text-base font-normal text-gray-700 outline-none"
+            className="my-5 w-full rounded border border-solid border-purple-600 bg-white px-3 py-1.5 text-center outline-none"
             placeholder={'"Qm..." or "org/subgraph"'}
             aria-label="Search"
             aria-describedby="button-addon2"
