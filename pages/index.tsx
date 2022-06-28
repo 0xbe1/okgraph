@@ -101,8 +101,8 @@ const Home: NextPage = () => {
       <main className="flex w-full flex-1 items-center sm:w-3/5 lg:w-2/5">
         <div className="w-full">
           <div className=" text-center">
-            <p className="mt-5 text-6xl font-bold text-purple-600">👌graph</p>
-            <p className="my-5 text-xl text-purple-600">
+            <p className="my-3 text-6xl font-bold text-purple-600">👌graph</p>
+            <p className="my-3 text-xl text-purple-600">
               🚀 A lightning fast subgraph UI
             </p>
           </div>
@@ -120,7 +120,7 @@ const Home: NextPage = () => {
             ref={inputElement}
           />
           {autoRefresh && (
-            <p className="my-3 rounded bg-purple-300 p-2 text-center text-sm">
+            <p className="my-3 rounded bg-purple-200 p-2 text-center">
               ⏰ Auto refresh every 30s. Last updated at{' '}
               {updatedAt.toLocaleTimeString('en-US')}
             </p>
@@ -141,6 +141,12 @@ const Home: NextPage = () => {
             0xbe1
           </a>{' '}
           |{' '}
+          <a
+            className="bg-purple-200 p-1 underline"
+            href="https://tally.so/r/nPdEkb"
+          >
+            Feedback
+          </a>{' '}
           <a className="underline" href="https://github.com/0xbe1/okgraph">
             Code
           </a>{' '}
