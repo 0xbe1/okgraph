@@ -3,6 +3,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useQueryState } from 'next-usequerystate'
 import React, { useEffect, useState } from 'react'
+import { useInterval } from 'react-use'
 import { SubgraphIndexingStatus } from './api/status'
 
 export type Result<T> =
@@ -29,6 +30,7 @@ const Home: NextPage = () => {
   const [statuses, setStatuses] =
     useState<Array<SubgraphIndexingStatus> | null>(null)
   const [errMsg, setErrMsg] = useState<string | null>(null)
+  const [autoRefresh, setAutoRefresh] = useState<boolean>(false)
 
   async function fetchData(subgraphID: string) {
     setLoading(true)
@@ -37,14 +39,27 @@ const Home: NextPage = () => {
       const result = resp.data as Result<Array<SubgraphIndexingStatus>>
       if (result.error) {
         setErrMsg(result.error.message)
+        setAutoRefresh(false)
       } else {
         setStatuses(result.data)
+        if (result.data.some((status) => status.fatalError === null)) {
+          setAutoRefresh(true)
+        }
       }
     } catch (error: any) {
       setErrMsg('axios.get failed')
     }
     setLoading(false)
   }
+
+  useInterval(
+    () => {
+      if (q && (isValidID(q) || isValidName(q))) {
+        fetchData(q)
+      }
+    },
+    autoRefresh ? 30 * 1000 : null
+  )
 
   useEffect(() => {
     if (q && (isValidID(q) || isValidName(q))) {
@@ -142,6 +157,7 @@ const Home: NextPage = () => {
 
 export default Home
 
+// TODO: split into 2, one for pre-fetch error, another for post-fetch error and data
 function Display({
   subgraphID,
   loading,
