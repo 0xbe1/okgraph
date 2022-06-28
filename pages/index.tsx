@@ -110,6 +110,12 @@ const Home: NextPage = () => {
             }}
             ref={inputElement}
           />
+          {autoRefresh && (
+            <p className="rounded bg-purple-300 p-2 text-center text-sm">
+              ⏰ Auto refresh every 30s. Last updated at{' '}
+              {new Date().toLocaleTimeString('en-US')}
+            </p>
+          )}
           <Display
             subgraphID={q || ''}
             loading={loading}
