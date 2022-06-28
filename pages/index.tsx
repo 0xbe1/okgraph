@@ -299,8 +299,16 @@ const Status = (props: SubgraphIndexingStatus) => {
         )}
       </div>
       {props.fatalError && (
-        <div className="my-2 rounded-md border border-red-600 p-1 text-sm text-red-600">
-          {props.fatalError?.message}
+        <div className="my-2 flex flex-col space-y-3 rounded-md border border-red-600 p-2 text-sm text-red-600">
+          {props.fatalError?.handler && (
+            <div>handler: {props.fatalError?.handler}</div>
+          )}
+          {props.fatalError?.block?.number && (
+            <div>block number: {props.fatalError?.block?.number}</div>
+          )}
+          {props.fatalError?.message && (
+            <div>message: {props.fatalError?.message}</div>
+          )}
         </div>
       )}
       {props.nonFatalErrors &&
@@ -309,7 +317,15 @@ const Status = (props: SubgraphIndexingStatus) => {
             key={i}
             className="my-2 rounded-md border border-yellow-600 p-1 text-sm text-yellow-600"
           >
-            {nonFatalError.message}
+            {nonFatalError.handler && (
+              <div>handler: {nonFatalError.handler}</div>
+            )}
+            {nonFatalError.block?.number && (
+              <div>block number: {nonFatalError.block?.number}</div>
+            )}
+            {nonFatalError.message && (
+              <div>message: {nonFatalError.message}</div>
+            )}
           </div>
         ))}
     </div>
