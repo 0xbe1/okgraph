@@ -5,6 +5,7 @@ import { useQueryState } from 'next-usequerystate'
 import React, { useEffect, useState } from 'react'
 import { useInterval } from 'react-use'
 import { SubgraphIndexingStatus } from './api/status'
+import { useCopyToClipboard } from 'react-use'
 
 const AUTO_REFRESH_INTERVAL = 30
 
@@ -227,12 +228,20 @@ function Display({
 
 const Status = (props: SubgraphIndexingStatus) => {
   const chain = props.chains[0]
+  const [clipboard, copyToClipboard] = useCopyToClipboard()
+
   return (
     <div className="p-2">
       <div className="my-3 grid grid-cols-2 gap-4">
         <div>
           <div>ID</div>
-          <div className="truncate text-purple-600">{props.subgraph}</div>
+
+          <div
+            className="truncate text-purple-600"
+            onClick={() => copyToClipboard(props.subgraph)}
+          >
+            {props.subgraph}
+          </div>
         </div>
         <div>
           <div>Links</div>
@@ -264,6 +273,23 @@ const Status = (props: SubgraphIndexingStatus) => {
             >
               Logs
             </a>
+            {chain.latestBlock && (
+              <>
+                {' ⛓️ '}
+                <a
+                  className="text-purple-600 hover:underline"
+                  onClick={() =>
+                    copyToClipboard(
+                      `features:\n\t- grafting\ngraft:\n\tbase: ${
+                        props.subgraph
+                      }\n\tblock: ${parseInt(chain.latestBlock!.number) - 1}`
+                    )
+                  }
+                >
+                  Copy Graft
+                </a>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -297,7 +323,14 @@ const Status = (props: SubgraphIndexingStatus) => {
         {chain.earliestBlock && (
           <div>
             <div>Start #</div>
-            <div className="text-purple-600">
+            <div
+              className="text-purple-600"
+              onClick={() =>
+                copyToClipboard(
+                  parseInt(chain.earliestBlock!.number).toString()
+                )
+              }
+            >
               {parseInt(chain.earliestBlock.number).toLocaleString('en-US')}
             </div>
           </div>
@@ -305,7 +338,12 @@ const Status = (props: SubgraphIndexingStatus) => {
         {chain.latestBlock && (
           <div>
             <div>Synced #</div>
-            <div className="text-purple-600">
+            <div
+              className="text-purple-600"
+              onClick={() =>
+                copyToClipboard(parseInt(chain.latestBlock!.number).toString())
+              }
+            >
               {parseInt(chain.latestBlock.number).toLocaleString('en-US')}
             </div>
           </div>
@@ -313,7 +351,14 @@ const Status = (props: SubgraphIndexingStatus) => {
         {chain.chainHeadBlock && (
           <div>
             <div>Last #</div>
-            <div className="text-purple-600">
+            <div
+              className="text-purple-600"
+              onClick={() =>
+                copyToClipboard(
+                  parseInt(chain.chainHeadBlock!.number).toString()
+                )
+              }
+            >
               {parseInt(chain.chainHeadBlock.number).toLocaleString('en-US')}
             </div>
           </div>
@@ -349,6 +394,17 @@ const Status = (props: SubgraphIndexingStatus) => {
             : ''}
           : {props.fatalError?.message}
         </div>
+      )}
+      {clipboard.error ? (
+        <div className="my-3 rounded-md border border-red-600 p-2 text-sm text-red-600">
+          Unable to copy value: {clipboard.error.message}
+        </div>
+      ) : (
+        clipboard.value && (
+          <div className="my-3 rounded-md border border-green-600 p-2 text-sm text-green-600">
+            Copied {clipboard.value}
+          </div>
+        )
       )}
       {props.nonFatalErrors &&
         props.nonFatalErrors.map((nonFatalError, i) => (
