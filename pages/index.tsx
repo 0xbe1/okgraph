@@ -273,6 +273,23 @@ const Status = (props: SubgraphIndexingStatus) => {
             >
               Logs
             </a>
+            {chain.latestBlock && (
+              <>
+                {' ⛓️ '}
+                <a
+                  className="text-purple-600 hover:underline"
+                  onClick={() =>
+                    copyToClipboard(
+                      `features:\n\t- grafting\ngraft:\n\tbase: ${
+                        props.subgraph
+                      }\n\tblock: ${parseInt(chain.latestBlock!.number) - 1}`
+                    )
+                  }
+                >
+                  Copy Graft
+                </a>
+              </>
+            )}
           </div>
         </div>
       </div>
