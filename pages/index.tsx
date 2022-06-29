@@ -237,7 +237,7 @@ const Status = (props: SubgraphIndexingStatus) => {
           <div>ID</div>
 
           <div
-            className="truncate text-purple-600"
+            className="cursor-copy truncate text-purple-600"
             onClick={() => copyToClipboard(props.subgraph)}
           >
             {props.subgraph}
@@ -276,8 +276,8 @@ const Status = (props: SubgraphIndexingStatus) => {
             {chain.latestBlock && (
               <>
                 {' ⛓️ '}
-                <a
-                  className="text-purple-600 hover:underline"
+                <span
+                  className="cursor-copy text-purple-600"
                   onClick={() =>
                     copyToClipboard(
                       `features:\n\t- grafting\ngraft:\n\tbase: ${
@@ -287,7 +287,7 @@ const Status = (props: SubgraphIndexingStatus) => {
                   }
                 >
                   Copy Graft
-                </a>
+                </span>
               </>
             )}
           </div>
@@ -324,7 +324,7 @@ const Status = (props: SubgraphIndexingStatus) => {
           <div>
             <div>Start #</div>
             <div
-              className="text-purple-600"
+              className="cursor-copy text-purple-600"
               onClick={() =>
                 copyToClipboard(
                   parseInt(chain.earliestBlock!.number).toString()
@@ -339,7 +339,7 @@ const Status = (props: SubgraphIndexingStatus) => {
           <div>
             <div>Synced #</div>
             <div
-              className="text-purple-600"
+              className="cursor-copy text-purple-600"
               onClick={() =>
                 copyToClipboard(parseInt(chain.latestBlock!.number).toString())
               }
@@ -352,7 +352,7 @@ const Status = (props: SubgraphIndexingStatus) => {
           <div>
             <div>Last #</div>
             <div
-              className="text-purple-600"
+              className="cursor-copy text-purple-600"
               onClick={() =>
                 copyToClipboard(
                   parseInt(chain.chainHeadBlock!.number).toString()
