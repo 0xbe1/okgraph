@@ -259,18 +259,18 @@ const Status = (props: SubgraphIndexingStatus) => {
               target="_blank"
               className="text-purple-600 hover:underline"
               href={`https://api.thegraph.com/explorer/graphql?query=${encodeURIComponent(
-                `{
-                  subgraphLogs(
-                    subgraphId: "${props.subgraph}"
-                    first: 100
-                    order: NewestFirst
-                    filters: ["error", "warning"]
-                    searchText: ""
-                  ) {
-                    timestamp
-                    text
-                  }
-                }`
+`{
+  subgraphLogs(
+    subgraphId: "${props.subgraph}"
+    first: 100
+    order: NewestFirst
+    filters: ["error", "warning"]
+    searchText: ""
+  ) {
+    timestamp
+    text
+  }
+}`
               )}`}
             >
               Logs
@@ -300,7 +300,7 @@ const Status = (props: SubgraphIndexingStatus) => {
             className="text-purple-600 hover:underline"
             href={`https://subgraphs.messari.io/subgraph?endpoint=https://api.thegraph.com/subgraphs/id/${props.subgraph}&tab=protocol`}
             >
-            Visual
+            Messari Visualizer
             </a>
           </div>
         </div>
