@@ -259,7 +259,7 @@ const Status = (props: SubgraphIndexingStatus) => {
               target="_blank"
               className="text-purple-600 hover:underline"
               href={`https://api.thegraph.com/explorer/graphql?query=${encodeURIComponent(
-`{
+                `{
   subgraphLogs(
     subgraphId: "${props.subgraph}"
     first: 100
