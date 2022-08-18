@@ -283,9 +283,9 @@ const Status = (props: SubgraphIndexingStatus) => {
                   className="cursor-copy text-purple-600"
                   onClick={() =>
                     copyToClipboard(
-                      `features:\n\t- grafting\ngraft:\n\tbase: ${
+                      `features:\n  - grafting\ngraft:\n  base: ${
                         props.subgraph
-                      }\n\tblock: ${parseInt(chain.latestBlock!.number) - 1}`
+                      }\n  block: ${parseInt(chain.latestBlock!.number) - 1}`
                     )
                   }
                 >
