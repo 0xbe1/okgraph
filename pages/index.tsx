@@ -247,6 +247,7 @@ const Status = (props: SubgraphIndexingStatus) => {
           <div>Links</div>
           <div>
             <a
+              target="_blank"
               className="text-purple-600 hover:underline"
               href={`https://api.thegraph.com/subgraphs/id/${props.subgraph}`}
             >
@@ -255,6 +256,7 @@ const Status = (props: SubgraphIndexingStatus) => {
             {' ⛓️ '}
 
             <a
+              target="_blank"
               className="text-purple-600 hover:underline"
               href={`https://api.thegraph.com/explorer/graphql?query=${encodeURIComponent(
                 `{
@@ -280,9 +282,9 @@ const Status = (props: SubgraphIndexingStatus) => {
                   className="cursor-copy text-purple-600"
                   onClick={() =>
                     copyToClipboard(
-                      `features:\n\t- grafting\ngraft:\n\tbase: ${
+                      `features:\n - grafting\ngraft:\n base: ${
                         props.subgraph
-                      }\n\tblock: ${parseInt(chain.latestBlock!.number) - 1}`
+                      }\n block: ${parseInt(chain.latestBlock!.number) - 1}`
                     )
                   }
                 >
@@ -290,6 +292,15 @@ const Status = (props: SubgraphIndexingStatus) => {
                 </span>
               </>
             )}
+            {' 📈 '}
+
+            <a
+              target="_blank"
+              className="text-purple-600 hover:underline"
+              href={`https://subgraphs.messari.io/subgraph?endpoint=https://api.thegraph.com/subgraphs/id/${props.subgraph}&tab=protocol`}
+            >
+              Messari Visualizer
+            </a>
           </div>
         </div>
       </div>
