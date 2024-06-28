@@ -138,21 +138,15 @@ const Home: NextPage = () => {
       <footer className="flex h-20 w-full flex-col items-center justify-center border-t">
         <div>
           by{' '}
-          <a className="underline" href="https://twitter.com/_0xbe1">
+          <a className="underline" href="https://0xbe1.xyz">
             0xbe1
           </a>{' '}
           |{' '}
-          <a
-            className="bg-purple-200 p-1 underline"
-            href="https://tally.so/r/nPdEkb"
-          >
-            Feedback
-          </a>{' '}
           <a className="underline" href="https://github.com/0xbe1/okgraph">
             Code
           </a>{' '}
-          <a className="underline" href="https://discord.gg/u5KUjNZ8wy">
-            Community
+          <a className="underline" href="https://t.me/be1labs">
+            Feedback
           </a>
         </div>
         <div>
@@ -160,16 +154,8 @@ const Home: NextPage = () => {
             miniscan.xyz
           </a>{' '}
           |{' '}
-          <a className="underline" href="https://theybuidl.xyz">
-            theybuidl.xyz
-          </a>{' '}
-          |{' '}
           <a className="text-purple-600 underline" href="https://okgraph.xyz">
             okgraph.xyz
-          </a>{' '}
-          |{' '}
-          <a className="underline" href="https://name3.org">
-            name3.org
           </a>
         </div>
       </footer>
