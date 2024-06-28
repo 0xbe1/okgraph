@@ -95,14 +95,14 @@ const Home: NextPage = () => {
   return (
     <div className="flex min-h-screen flex-col items-center font-mono">
       <Head>
-        <title>👌graph</title>
+        <title>okgraph</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className="flex w-full flex-1 items-center sm:w-3/5 lg:w-2/5">
         <div className="w-full">
           <div className=" text-center">
-            <p className="my-3 text-6xl font-bold text-purple-600">👌graph</p>
+            <p className="my-3 text-6xl font-bold text-purple-600">okgraph</p>
             <p className="my-3 text-xl text-purple-600">
               🚀 A lightning fast subgraph UI
             </p>
